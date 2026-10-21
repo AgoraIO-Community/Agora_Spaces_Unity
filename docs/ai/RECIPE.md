@@ -1,62 +1,44 @@
-# Unity spatial audio spaces
+# Unity Spatial Audio Spaces
 
 ## Overview
 
 Create a Unity spatial audio/video space using Agora RTC so users can move through a shared real-time scene.
 
-Use this recipe when you want a working reference for Unity, spatial audio, RTC channels, 3D scene.
-
 Repository: [AgoraIO-Community/Agora_Spaces_Unity](https://github.com/AgoraIO-Community/Agora_Spaces_Unity)
 
-## Prerequisites
+## Prerequisites and Setup
 
-- An Agora account and project App ID.
-- The platform toolchain required by this repository.
-- A test device, simulator, browser, or runtime that supports the sample's audio/video path.
-- A second RTC client or sample instance for validating remote publish and subscribe behavior.
-
-## Configure
-
-Create or update the project configuration with:
-
-- `AGORA_APP_ID`
-
-For local testing, some Agora projects allow tokenless joins when App Certificate is disabled. For production, generate RTC tokens on a trusted server and renew them before expiration.
-
-For Unity, confirm camera, microphone, and platform player permissions before testing on a device.
-
-## Run The Sample
-
-Open the project in Unity, configure the Agora App ID in the sample settings or scripts described by the README, then play or build the scene. Join from another client to verify published media in the scene.
+1. Use Unity 2021.3 LTS as recommended by the README. Import the compatible Agora Video SDK (the guide uses v4.2.0) and NewtonSoft JSON package.
+2. Set the App ID in `Assets/AgoraSpaces/_AppIDInput/AppIDInput` as described in the README. Supply a suitable token when your project requires authentication.
+3. Add the scenes from `Assets/AgoraSpaces/Scenes` to build settings with `SpaceOffline` first, then build for the target platform. Add camera/microphone usage descriptions for macOS/iOS.
+4. Run a Mirror host and client. Give clients the host/server address and use the same room name, which identifies the Agora channel.
 
 ## What To Check
 
-- The app registers Agora RTC event handlers before joining a channel.
-- Local media preview or local audio state appears after permissions are granted.
-- Remote users are rendered or heard when they publish audio/video.
-- `user-published` or native user-joined callbacks are handled for each media type the sample supports.
-- Leaving the channel stops local capture and releases RTC resources.
+- Verify both clients see synchronized characters and hear positional audio.
+- Test camera visibility and movement-dependent audio.
+- Disconnect a client and stop the host; confirm media and Mirror room state terminate.
 
-## Production Notes
+## Integration Notes
 
-- Never ship an App Certificate or privileged token generator in a client app.
-- Renew tokens from the SDK expiration callback before the current token expires.
-- Use subscriber/audience roles for users who should not publish media.
-- Keep UID types consistent across clients in the same channel.
-- For browser-based samples, deploy over HTTPS except when testing on `localhost`; for native samples, validate camera, microphone, and audio routing permissions on target devices.
+Mirror handles world synchronization while Agora handles media. Both network paths must be reachable. Optional transcription has additional service requirements.
+
+Keep App Certificates, customer secrets and privileged token generation on a trusted backend for production. Use only your own test credentials while configuring historical demos; do not commit them. Preserve the sample's existing dependency versions and lifecycle until a separate migration is tested.
+
+## Source References
+
+- [README.md](../../README.md)
+
+## Validation Status
+
+This recipe was checked against the repository's source and setup documents. The platform build and live service/device flow have not been run as part of this documentation change. Complete the checks above in an environment with the required SDKs, hardware and service access before treating it as a validated deployment.
 
 ## Implementation Prompt
 
 ```text
-You are working in `AgoraIO-Community/Agora_Spaces_Unity`. Add or adapt this sample so a developer can run the unity spatial audio spaces end to end with Agora RTC.
+You are working in AgoraIO-Community/Agora_Spaces_Unity. Use docs/ai/RECIPE.md and its linked source files to adapt the Unity Spatial Audio Spaces reference to this project.
 
-Goals:
-- Preserve the existing sample architecture and README commands.
-- Configure Agora credentials through environment variables or the platform-native configuration already used by the repo.
-- Register RTC event handlers before joining the channel.
-- Join a test channel, publish local media when the sample role allows it, and subscribe to remote users.
-- Clean up RTC resources when leaving the channel or closing the app.
-- Add production notes for token generation, renewal, and audience-only subscriber roles where applicable.
+Start by inspecting the actual sample directory and configuration described above. Resolve its listed missing prerequisites before claiming it is runnable. Preserve the existing architecture and compatible dependency versions. Implement the recipe's feature-specific flow, permissions and resource cleanup. Use a trusted backend for privileged credentials and tokens in production.
 
-Validate by running the project-specific build or launch command from the README and testing with a second client in the same channel.
+Run the repository-specific build or launch flow, then perform each What To Check item. Report the commands run, the observed results and anything blocked by service access, hardware or incomplete sample code. Do not claim live validation from a documentation or catalog build alone.
 ```
